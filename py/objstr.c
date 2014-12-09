@@ -136,6 +136,7 @@ STATIC void str_print(void (*print)(void *env, const char *fmt, ...), void *env,
     }
 }
 
+#if !MICROPY_PY_BUILTINS_STR_UNICODE || MICROPY_CPYTHON_COMPAT
 STATIC mp_obj_t str_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
 #if MICROPY_CPYTHON_COMPAT
     if (n_kw != 0) {
@@ -173,6 +174,7 @@ STATIC mp_obj_t str_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_uint_t n_kw,
             }
     }
 }
+#endif
 
 STATIC mp_obj_t bytes_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
     if (n_args == 0) {
@@ -208,6 +210,12 @@ STATIC mp_obj_t bytes_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_uint_t n_k
         mp_obj_t o = mp_obj_str_builder_start(&mp_type_bytes, len, &data);
         memset(data, 0, len);
         return mp_obj_str_builder_end(o);
+    }
+
+    // check if argument has the buffer protocol
+    mp_buffer_info_t bufinfo;
+    if (mp_get_buffer(args[0], &bufinfo, MP_BUFFER_READ)) {
+        return mp_obj_new_str_of_type(&mp_type_bytes, bufinfo.buf, bufinfo.len);
     }
 
     mp_int_t len;

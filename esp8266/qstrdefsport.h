@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013, 2014 Damien P. George
+ * Copyright (c) 2014 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,9 +24,18 @@
  * THE SOFTWARE.
  */
 
-extern const mp_obj_dict_t mp_builtin_object_dict_obj;
-extern const mp_obj_dict_t mp_builtin_module_dict_obj;
+// qstrs specific to this port
 
-#if MICROPY_MODULE_WEAK_LINKS
-extern const mp_obj_dict_t mp_builtin_module_weak_links_dict_obj;
-#endif
+Q(help)
+
+// pyb module
+Q(pyb)
+Q(info)
+Q(freq)
+Q(millis)
+Q(elapsed_millis)
+Q(micros)
+Q(elapsed_micros)
+Q(delay)
+Q(udelay)
+Q(sync)

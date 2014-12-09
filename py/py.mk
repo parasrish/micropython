@@ -15,6 +15,7 @@ PY_O_BASENAME = \
 	nlrx86.o \
 	nlrx64.o \
 	nlrthumb.o \
+	nlrxtensa.o \
 	nlrsetjmp.o \
 	malloc.o \
 	gc.o \
@@ -90,11 +91,10 @@ PY_O_BASENAME = \
 	sequence.o \
 	stream.o \
 	binary.o \
-	builtin.o \
 	builtinimport.o \
 	builtinevex.o \
-	builtintables.o \
 	modarray.o \
+	modbuiltins.o \
 	modcollections.o \
 	modgc.o \
 	modio.o \
@@ -115,6 +115,8 @@ PY_O_BASENAME = \
 	../extmod/modure.o \
 	../extmod/moduzlib.o \
 	../extmod/moduheapq.o \
+	../extmod/moduhashlib.o \
+	../extmod/modubinascii.o \
 
 # prepend the build destination prefix to the py object files
 PY_O = $(addprefix $(PY_BUILD)/, $(PY_O_BASENAME))

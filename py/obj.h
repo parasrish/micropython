@@ -97,8 +97,17 @@ typedef struct _mp_obj_base_t mp_obj_base_t;
 #define MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(obj_name, n_args_min, n_args_max, fun_name) MP_DEFINE_CONST_FUN_OBJ_VOID_PTR(obj_name, false, n_args_min, n_args_max, (mp_fun_var_t)fun_name)
 #define MP_DEFINE_CONST_FUN_OBJ_KW(obj_name, n_args_min, fun_name) MP_DEFINE_CONST_FUN_OBJ_VOID_PTR(obj_name, true, n_args_min, MP_OBJ_FUN_ARGS_MAX, (mp_fun_kw_t)fun_name)
 
-// This macro is used to define constant dict objects
+// These macros are used to define constant map/dict objects
 // You can put "static" in front of the definition to make it local
+
+#define MP_DEFINE_CONST_MAP(map_name, table_name) \
+    const mp_map_t map_name = { \
+        .all_keys_are_qstrs = 1, \
+        .table_is_fixed_array = 1, \
+        .used = MP_ARRAY_SIZE(table_name), \
+        .alloc = MP_ARRAY_SIZE(table_name), \
+        .table = (mp_map_elem_t*)table_name, \
+    }
 
 #define MP_DEFINE_CONST_DICT(dict_name, table_name) \
     const mp_obj_dict_t dict_name = { \
@@ -106,8 +115,8 @@ typedef struct _mp_obj_base_t mp_obj_base_t;
         .map = { \
             .all_keys_are_qstrs = 1, \
             .table_is_fixed_array = 1, \
-            .used = sizeof(table_name) / sizeof(mp_map_elem_t), \
-            .alloc = sizeof(table_name) / sizeof(mp_map_elem_t), \
+            .used = MP_ARRAY_SIZE(table_name), \
+            .alloc = MP_ARRAY_SIZE(table_name), \
             .table = (mp_map_elem_t*)table_name, \
         }, \
     }
@@ -147,6 +156,8 @@ typedef enum _mp_map_lookup_kind_t {
     MP_MAP_LOOKUP_ADD_IF_NOT_FOUND,   // 1
     MP_MAP_LOOKUP_REMOVE_IF_FOUND,    // 2
 } mp_map_lookup_kind_t;
+
+extern const mp_map_t mp_const_empty_map;
 
 static inline bool MP_MAP_SLOT_IS_FILLED(const mp_map_t *map, mp_uint_t pos) { return ((map)->table[pos].key != MP_OBJ_NULL && (map)->table[pos].key != MP_OBJ_SENTINEL); }
 
@@ -416,7 +427,7 @@ mp_obj_t mp_instance_cast_to_native_base(mp_const_obj_t self_in, mp_const_obj_t 
 
 void mp_obj_print_helper(void (*print)(void *env, const char *fmt, ...), void *env, mp_obj_t o_in, mp_print_kind_t kind);
 void mp_obj_print(mp_obj_t o, mp_print_kind_t kind);
-void mp_obj_print_exception(mp_obj_t exc);
+void mp_obj_print_exception(void (*print)(void *env, const char *fmt, ...), void *env, mp_obj_t exc);
 
 bool mp_obj_is_true(mp_obj_t arg);
 
@@ -458,12 +469,12 @@ void mp_obj_cell_set(mp_obj_t self_in, mp_obj_t obj);
 
 // int
 // For long int, returns value truncated to mp_int_t
-mp_int_t mp_obj_int_get(mp_const_obj_t self_in);
+mp_int_t mp_obj_int_get_truncated(mp_const_obj_t self_in);
+// Will raise exception if value doesn't fit into mp_int_t
+mp_int_t mp_obj_int_get_checked(mp_const_obj_t self_in);
 #if MICROPY_PY_BUILTINS_FLOAT
 mp_float_t mp_obj_int_as_float(mp_obj_t self_in);
 #endif
-// Will raise exception if value doesn't fit into mp_int_t
-mp_int_t mp_obj_int_get_checked(mp_const_obj_t self_in);
 
 // exception
 #define mp_obj_is_native_exception_instance(o) (mp_obj_get_type(o)->make_new == mp_obj_exception_make_new)

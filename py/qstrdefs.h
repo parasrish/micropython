@@ -363,6 +363,8 @@ Q(rect)
 Q(mem_total)
 Q(mem_current)
 Q(mem_peak)
+Q(mem_info)
+Q(qstr_info)
 #endif
 
 #if MICROPY_ENABLE_EMERGENCY_EXCEPTION_BUF && (MICROPY_EMERGENCY_EXCEPTION_BUF_SIZE == 0)
@@ -401,6 +403,7 @@ Q(version_info)
 #if MICROPY_PY_SYS_MAXSIZE
 Q(maxsize)
 #endif
+Q(print_exception)
 #endif
 
 #if MICROPY_PY_STRUCT
@@ -509,4 +512,17 @@ Q(uheapq)
 Q(heappush)
 Q(heappop)
 Q(heapify)
+#endif
+
+#if MICROPY_PY_UHASHLIB
+Q(uhashlib)
+Q(update)
+Q(digest)
+Q(hexdigest)
+Q(sha256)
+#endif
+
+#if MICROPY_PY_UBINASCII
+Q(ubinascii)
+Q(hexlify)
 #endif

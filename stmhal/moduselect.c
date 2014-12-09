@@ -28,8 +28,6 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include "stm32f4xx_hal.h"
-
 #include "mpconfig.h"
 #include "misc.h"
 #include "nlr.h"
@@ -37,6 +35,7 @@
 #include "obj.h"
 #include "objlist.h"
 #include "pybioctl.h"
+#include MICROPY_HAL_H
 
 /// \module select - Provides select function to wait for events on a stream
 ///
@@ -292,16 +291,7 @@ STATIC const mp_map_elem_t mp_module_select_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_poll), (mp_obj_t)&mp_select_poll_obj },
 };
 
-STATIC const mp_obj_dict_t mp_module_select_globals = {
-    .base = {&mp_type_dict},
-    .map = {
-        .all_keys_are_qstrs = 1,
-        .table_is_fixed_array = 1,
-        .used = MP_ARRAY_SIZE(mp_module_select_globals_table),
-        .alloc = MP_ARRAY_SIZE(mp_module_select_globals_table),
-        .table = (mp_map_elem_t*)mp_module_select_globals_table,
-    },
-};
+STATIC MP_DEFINE_CONST_DICT(mp_module_select_globals, mp_module_select_globals_table);
 
 const mp_obj_module_t mp_module_uselect = {
     .base = { &mp_type_module },

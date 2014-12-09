@@ -14,6 +14,7 @@
 #include "runtime0.h"
 #include "runtime.h"
 #include "repl.h"
+#include "pfenv.h"
 
 void do_str(const char *src) {
     mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR__lt_stdin_gt_, src, strlen(src), 0);
@@ -32,13 +33,13 @@ void do_str(const char *src) {
     }
 
     // parse okay
-    qstr source_name = mp_lexer_source_name(lex);
+    qstr source_name = lex->source_name;
     mp_lexer_free(lex);
     mp_obj_t module_fun = mp_compile(pn, source_name, MP_EMIT_OPT_NONE, true);
 
     if (mp_obj_is_exception_instance(module_fun)) {
         // compile error
-        mp_obj_print_exception(module_fun);
+        mp_obj_print_exception(printf_wrapper, NULL, module_fun);
         return;
     }
 
@@ -48,7 +49,7 @@ void do_str(const char *src) {
         nlr_pop();
     } else {
         // uncaught exception
-        mp_obj_print_exception((mp_obj_t)nlr.ret_val);
+        mp_obj_print_exception(printf_wrapper, NULL, (mp_obj_t)nlr.ret_val);
     }
 }
 
